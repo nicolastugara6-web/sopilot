@@ -1,0 +1,2702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#FFFFFF">
+  <title>SOPilot — 餐饮门店SOP操作系统</title>
+
+  <!-- ===== CSS 全部内联 ===== -->
+  <style>
+    /* ============================================================
+       CSS 变量设计系统
+       ============================================================ */
+    :root {
+      /* 颜色 */
+      --color-bg: #FFFFFF;
+      --color-surface: #F5F5F7;
+      --color-surface-hover: #EEEEEE;
+      --color-text: #111111;
+      --color-text-secondary: #666666;
+      --color-text-tertiary: #999999;
+      --color-primary: #00B96B;
+      --color-primary-light: #E6F9F0;
+      --color-primary-dark: #009955;
+      --color-warning: #FF9800;
+      --color-warning-light: #FFF3E0;
+      --color-error: #F44336;
+      --color-error-light: #FFEBEE;
+      --color-success: #4CAF50;
+      --color-success-light: #E8F5E9;
+      --color-border: #E5E5EA;
+      --color-border-light: #F0F0F5;
+      --color-shadow: rgba(0, 0, 0, 0.06);
+      --color-shadow-strong: rgba(0, 0, 0, 0.12);
+      --color-overlay: rgba(0, 0, 0, 0.6);
+      --color-danger-bg: #FFF5F5;
+      --color-danger-border: #FECACA;
+
+      /* 字体 */
+      --font-title: 38px;
+      --font-step-title: 32px;
+      --font-body: 20px;
+      --font-body-sm: 17px;
+      --font-button: 22px;
+      --font-caption: 15px;
+      --font-key-number: clamp(72px, 18vw, 140px);
+      --font-key-unit: 28px;
+
+      /* 间距 */
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+      --space-2xl: 48px;
+
+      /* 圆角 */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --radius-full: 9999px;
+
+      /* 阴影 */
+      --shadow-sm: 0 1px 3px var(--color-shadow);
+      --shadow-md: 0 4px 12px var(--color-shadow);
+      --shadow-lg: 0 8px 24px var(--color-shadow-strong);
+
+      /* 动画 */
+      --transition-fast: 150ms ease;
+      --transition-normal: 250ms ease;
+      --transition-slow: 350ms ease;
+
+      /* 安全区 */
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+
+      /* 底部导航高度 */
+      --nav-height: 80px;
+
+      /* 进度条颜色（动态覆盖） */
+      --progress-color: var(--color-primary);
+    }
+
+    /* 暗黑模式变量覆盖 */
+    body.dark {
+      --color-bg: #1C1C1E;
+      --color-surface: #2C2C2E;
+      --color-surface-hover: #3A3A3C;
+      --color-text: #F5F5F7;
+      --color-text-secondary: #AEAEB2;
+      --color-text-tertiary: #636366;
+      --color-primary: #34D399;
+      --color-primary-light: #064E3B;
+      --color-primary-dark: #6EE7B7;
+      --color-warning: #FBBF24;
+      --color-warning-light: #451A03;
+      --color-error: #F87171;
+      --color-error-light: #450A0A;
+      --color-success: #4ADE80;
+      --color-success-light: #052E16;
+      --color-border: #38383A;
+      --color-border-light: #2C2C2E;
+      --color-shadow: rgba(0, 0, 0, 0.3);
+      --color-shadow-strong: rgba(0, 0, 0, 0.5);
+      --color-overlay: rgba(0, 0, 0, 0.8);
+      --color-danger-bg: #450A0A;
+      --color-danger-border: #7F1D1D;
+    }
+
+    /* ============================================================
+       全局重置
+       ============================================================ */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-text-size-adjust: 100%;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding-top: var(--safe-top);
+      padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + var(--space-md));
+      padding-left: var(--safe-left);
+      padding-right: var(--safe-right);
+      transition: background-color var(--transition-normal), color var(--transition-normal);
+      overflow-x: hidden;
+    }
+
+    /* 选择颜色 */
+    ::selection {
+      background-color: var(--color-primary);
+      color: #FFFFFF;
+    }
+
+    /* 滚动条 */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: var(--radius-full);
+    }
+
+    /* ============================================================
+       布局容器
+       ============================================================ */
+    .app-container {
+      max-width: 768px;
+      margin: 0 auto;
+      padding: 0 var(--space-lg);
+    }
+
+    /* ============================================================
+       产品头部
+       ============================================================ */
+    .header {
+      padding: var(--space-xl) 0 var(--space-lg);
+      text-align: center;
+    }
+
+    .product-image-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto var(--space-lg);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      cursor: pointer;
+      aspect-ratio: 1;
+      background: var(--color-surface);
+      transition: transform var(--transition-normal);
+    }
+    .product-image-wrapper:active {
+      transform: scale(0.97);
+    }
+    .product-image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .product-image-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 80px;
+      background: linear-gradient(135deg, #E6F9F0, #D1FAE5);
+    }
+    body.dark .product-image-placeholder {
+      background: linear-gradient(135deg, #064E3B, #065F46);
+    }
+
+    .product-title {
+      font-size: var(--font-title);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: var(--space-sm);
+      line-height: 1.2;
+      color: var(--color-text);
+    }
+
+    .product-meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-sm) var(--space-lg);
+      margin-bottom: var(--space-md);
+    }
+    .product-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-body-sm);
+      color: var(--color-text-secondary);
+    }
+    .product-meta-item .meta-icon {
+      font-size: 18px;
+    }
+
+    .product-tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .product-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 14px;
+      background: var(--color-primary-light);
+      color: var(--color-primary);
+      border-radius: var(--radius-full);
+      font-size: var(--font-caption);
+      font-weight: 600;
+      transition: background var(--transition-fast);
+    }
+
+    .product-description {
+      font-size: var(--font-body);
+      color: var(--color-text-secondary);
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ============================================================
+       分区标题
+       ============================================================ */
+    .section-title {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: var(--space-lg);
+      padding-top: var(--space-xl);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .section-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 26px;
+      background: var(--color-primary);
+      border-radius: var(--radius-full);
+    }
+
+    /* ============================================================
+       配方 / 原料卡片
+       ============================================================ */
+    .ingredient-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+    }
+    .ingredient-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg) var(--space-md);
+      text-align: center;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+      border: 1px solid var(--color-border-light);
+    }
+    .ingredient-card:active {
+      transform: scale(0.97);
+    }
+    .ingredient-icon {
+      font-size: 36px;
+      margin-bottom: var(--space-sm);
+    }
+    .ingredient-name {
+      font-size: var(--font-body-sm);
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: var(--space-xs);
+    }
+    .ingredient-amount {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--color-primary);
+    }
+    .ingredient-unit {
+      font-size: var(--font-caption);
+      color: var(--color-text-tertiary);
+    }
+
+    /* ============================================================
+       工具清单
+       ============================================================ */
+    .tools-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-xl);
+    }
+    .tool-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--color-bg);
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-full);
+      font-size: var(--font-body-sm);
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      transition: border-color var(--transition-fast);
+    }
+
+    /* ============================================================
+       搜索栏
+       ============================================================ */
+    .search-bar {
+      position: sticky;
+      top: var(--safe-top);
+      z-index: 50;
+      background: var(--color-bg);
+      padding: var(--space-md) 0;
+      transition: background var(--transition-normal);
+    }
+    .search-input-wrapper {
+      display: flex;
+      align-items: center;
+      background: var(--color-surface);
+      border: 2px solid var(--color-border-light);
+      border-radius: var(--radius-lg);
+      padding: 0 var(--space-lg);
+      gap: var(--space-sm);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    .search-input-wrapper:focus-within {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-light);
+    }
+    .search-icon {
+      font-size: 20px;
+      color: var(--color-text-tertiary);
+      flex-shrink: 0;
+    }
+    .search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: var(--font-body);
+      color: var(--color-text);
+      padding: 14px 0;
+      font-family: inherit;
+    }
+    .search-input::placeholder {
+      color: var(--color-text-tertiary);
+    }
+    .search-clear {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: var(--color-text-tertiary);
+      cursor: pointer;
+      padding: var(--space-xs);
+      visibility: hidden;
+      transition: color var(--transition-fast);
+    }
+    .search-clear.visible {
+      visibility: visible;
+    }
+
+    /* ============================================================
+       进度条
+       ============================================================ */
+    .progress-section {
+      padding: var(--space-md) 0;
+      margin-bottom: var(--space-md);
+    }
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-sm);
+    }
+    .progress-count {
+      font-size: var(--font-body);
+      font-weight: 700;
+      color: var(--color-text);
+    }
+    .progress-percent {
+      font-size: var(--font-body);
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: var(--color-surface);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--color-primary);
+      border-radius: var(--radius-full);
+      transition: width var(--transition-slow);
+    }
+
+    /* ============================================================
+       步骤卡片
+       ============================================================ */
+    .steps-container {
+      margin-bottom: var(--space-xl);
+    }
+
+    .step-card {
+      background: var(--color-bg);
+      border: 2px solid var(--color-border-light);
+      border-radius: var(--radius-xl);
+      margin-bottom: var(--space-lg);
+      overflow: hidden;
+      transition: all var(--transition-normal);
+      box-shadow: var(--shadow-sm);
+    }
+    .step-card.completed {
+      border-color: var(--color-success);
+      background: var(--color-success-light);
+    }
+    .step-card.danger {
+      border-color: var(--color-error);
+      background: var(--color-danger-bg);
+    }
+    .step-card.warning-card {
+      border-color: var(--color-warning);
+    }
+    .step-card.search-match {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 4px var(--color-primary-light);
+    }
+
+    .step-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-md);
+      padding: var(--space-lg);
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .step-number {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--color-surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--color-text-secondary);
+      transition: all var(--transition-normal);
+    }
+    .step-card.completed .step-number {
+      background: var(--color-success);
+      color: #FFFFFF;
+    }
+    .step-card.danger .step-number {
+      background: var(--color-error);
+      color: #FFFFFF;
+    }
+    .step-header-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .step-title {
+      font-size: var(--font-step-title);
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: var(--space-xs);
+      word-break: break-word;
+    }
+    .step-header-meta {
+      font-size: var(--font-caption);
+      color: var(--color-text-tertiary);
+    }
+    .step-toggle-icon {
+      flex-shrink: 0;
+      font-size: 18px;
+      color: var(--color-text-tertiary);
+      transition: transform var(--transition-normal);
+      margin-top: 4px;
+    }
+    .step-card.expanded .step-toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .step-card-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height var(--transition-slow);
+    }
+    .step-card.expanded .step-card-body {
+      max-height: 3000px;
+    }
+    .step-card-body-inner {
+      padding: 0 var(--space-lg) var(--space-lg);
+    }
+
+    /* 步骤图片 */
+    .step-image-wrapper {
+      position: relative;
+      width: 100%;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: var(--space-lg);
+      cursor: pointer;
+      background: var(--color-surface);
+    }
+    .step-image-wrapper img {
+      width: 100%;
+      display: block;
+    }
+    .step-image-placeholder {
+      width: 100%;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      background: var(--color-surface);
+      color: var(--color-text-tertiary);
+    }
+
+    /* 关键数字 */
+    .key-number-display {
+      text-align: center;
+      padding: var(--space-lg) 0;
+      margin-bottom: var(--space-lg);
+    }
+    .key-number {
+      font-size: var(--font-key-number);
+      font-weight: 900;
+      color: var(--color-primary);
+      letter-spacing: -2px;
+      line-height: 1;
+    }
+    .key-number-unit {
+      font-size: var(--font-key-unit);
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      margin-top: var(--space-xs);
+    }
+
+    /* 步骤描述 */
+    .step-description {
+      font-size: var(--font-body);
+      color: var(--color-text);
+      line-height: 1.8;
+      margin-bottom: var(--space-lg);
+      padding: var(--space-lg);
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+    }
+
+    /* 提示框 */
+    .step-warning-box {
+      padding: var(--space-md) var(--space-lg);
+      background: var(--color-error-light);
+      border-left: 4px solid var(--color-error);
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--space-md);
+      font-size: var(--font-body-sm);
+      color: var(--color-error);
+      font-weight: 600;
+    }
+    .step-warning-box .box-icon {
+      margin-right: var(--space-sm);
+    }
+
+    .step-tips-box {
+      padding: var(--space-md) var(--space-lg);
+      background: var(--color-success-light);
+      border-left: 4px solid var(--color-success);
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--space-md);
+      font-size: var(--font-body-sm);
+      color: #065F46;
+    }
+    body.dark .step-tips-box {
+      color: #6EE7B7;
+    }
+    .step-tips-box .box-icon {
+      margin-right: var(--space-sm);
+    }
+
+    .step-errors-box {
+      padding: var(--space-md) var(--space-lg);
+      background: var(--color-warning-light);
+      border-left: 4px solid var(--color-warning);
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--space-md);
+      font-size: var(--font-body-sm);
+      color: #92400E;
+    }
+    body.dark .step-errors-box {
+      color: #FCD34D;
+    }
+    .step-errors-box .box-icon {
+      margin-right: var(--space-sm);
+    }
+
+    /* 计时器 */
+    .timer-section {
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-lg);
+      text-align: center;
+    }
+    .timer-display {
+      font-size: 56px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      color: var(--color-text);
+      letter-spacing: -1px;
+      margin-bottom: var(--space-md);
+    }
+    .timer-display.warning {
+      color: var(--color-warning);
+    }
+    .timer-display.danger {
+      color: var(--color-error);
+    }
+    .timer-controls {
+      display: flex;
+      gap: var(--space-sm);
+      justify-content: center;
+    }
+    .timer-btn {
+      min-height: 48px;
+      padding: 10px 24px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: var(--font-body-sm);
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all var(--transition-fast);
+    }
+    .timer-btn-start {
+      background: var(--color-primary);
+      color: #FFFFFF;
+    }
+    .timer-btn-pause {
+      background: var(--color-warning);
+      color: #FFFFFF;
+    }
+    .timer-btn-reset {
+      background: var(--color-surface-hover);
+      color: var(--color-text);
+    }
+
+    /* 语音按钮 */
+    .voice-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      background: var(--color-surface-hover);
+      border: none;
+      border-radius: var(--radius-full);
+      font-size: var(--font-body-sm);
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all var(--transition-fast);
+      margin-bottom: var(--space-md);
+    }
+    .voice-btn:active {
+      background: var(--color-primary-light);
+      color: var(--color-primary);
+    }
+
+    /* 完成按钮 */
+    .step-complete-btn {
+      width: 100%;
+      min-height: 64px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: var(--font-button);
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      background: var(--color-success);
+      color: #FFFFFF;
+      transition: all var(--transition-normal);
+      margin-top: var(--space-md);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .step-complete-btn:active {
+      transform: scale(0.97);
+      opacity: 0.9;
+    }
+    .step-card.completed .step-complete-btn {
+      background: var(--color-text-tertiary);
+      pointer-events: none;
+    }
+
+    /* ============================================================
+       FAQ 区域
+       ============================================================ */
+    .faq-section {
+      margin-bottom: var(--space-xl);
+    }
+    .faq-item {
+      border: 1.5px solid var(--color-border-light);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-sm);
+      overflow: hidden;
+      transition: border-color var(--transition-fast);
+    }
+    .faq-question {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-lg);
+      cursor: pointer;
+      font-size: var(--font-body);
+      font-weight: 600;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      gap: var(--space-md);
+    }
+    .faq-question-text {
+      flex: 1;
+    }
+    .faq-icon {
+      flex-shrink: 0;
+      font-size: 18px;
+      color: var(--color-text-tertiary);
+      transition: transform var(--transition-normal);
+    }
+    .faq-item.expanded .faq-icon {
+      transform: rotate(180deg);
+    }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height var(--transition-slow);
+    }
+    .faq-item.expanded .faq-answer {
+      max-height: 500px;
+    }
+    .faq-answer-text {
+      padding: 0 var(--space-lg) var(--space-lg);
+      font-size: var(--font-body-sm);
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+    }
+
+    /* ============================================================
+       完成画面
+       ============================================================ */
+    .completion-screen {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 100;
+      background: var(--color-bg);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: var(--space-xl);
+    }
+    .completion-screen.visible {
+      display: flex;
+    }
+    .completion-icon {
+      font-size: 80px;
+      margin-bottom: var(--space-lg);
+    }
+    .completion-title {
+      font-size: var(--font-title);
+      font-weight: 800;
+      margin-bottom: var(--space-md);
+    }
+    .completion-message {
+      font-size: var(--font-body);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-xl);
+    }
+    .completion-stats {
+      display: flex;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-xl);
+    }
+    .completion-stat {
+      text-align: center;
+    }
+    .completion-stat-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--color-primary);
+    }
+    .completion-stat-label {
+      font-size: var(--font-caption);
+      color: var(--color-text-tertiary);
+      margin-top: var(--space-xs);
+    }
+    .completion-restart-btn {
+      min-height: 64px;
+      padding: 0 48px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: var(--font-button);
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      background: var(--color-primary);
+      color: #FFFFFF;
+      transition: all var(--transition-normal);
+    }
+    .completion-restart-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* ============================================================
+       底部导航
+       ============================================================ */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 90;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: var(--space-sm) var(--space-md);
+      padding-bottom: calc(var(--space-sm) + var(--safe-bottom));
+      background: var(--color-bg);
+      border-top: 1px solid var(--color-border-light);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: background var(--transition-normal), border-color var(--transition-normal);
+    }
+    .nav-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      min-width: 56px;
+      min-height: 56px;
+      padding: var(--space-sm) var(--space-xs);
+      border: none;
+      background: transparent;
+      color: var(--color-text-secondary);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color var(--transition-fast);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nav-btn:active {
+      color: var(--color-primary);
+    }
+    .nav-btn-icon {
+      font-size: 22px;
+    }
+    .nav-btn-label {
+      font-size: 11px;
+    }
+
+    /* ============================================================
+       全屏图片查看器
+       ============================================================ */
+    .image-viewer {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 200;
+      background: var(--color-overlay);
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: var(--space-lg);
+    }
+    .image-viewer.visible {
+      display: flex;
+    }
+    .image-viewer img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+    }
+    .image-viewer-placeholder {
+      font-size: 120px;
+      color: rgba(255,255,255,0.3);
+    }
+    .image-viewer-close {
+      position: absolute;
+      top: calc(var(--space-lg) + var(--safe-top));
+      right: var(--space-lg);
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: #FFFFFF;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ============================================================
+       全局操作按钮行
+       ============================================================ */
+    .global-actions {
+      display: flex;
+      gap: var(--space-sm);
+      margin-top: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+    .global-action-btn {
+      flex: 1;
+      min-height: 52px;
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-bg);
+      color: var(--color-text-secondary);
+      font-size: var(--font-body-sm);
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all var(--transition-fast);
+    }
+    .global-action-btn:active {
+      background: var(--color-surface-hover);
+    }
+
+    /* 主题切换浮动按钮 */
+    .theme-toggle {
+      position: fixed;
+      top: calc(var(--space-lg) + var(--safe-top));
+      right: var(--space-lg);
+      z-index: 80;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      cursor: pointer;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-fast);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .theme-toggle:active {
+      transform: scale(0.92);
+    }
+
+    /* ============================================================
+       响应式适配
+       ============================================================ */
+    @media (max-width: 360px) {
+      :root {
+        --font-title: 32px;
+        --font-step-title: 26px;
+        --font-body: 18px;
+        --font-body-sm: 16px;
+        --font-button: 20px;
+        --font-key-number: clamp(60px, 22vw, 100px);
+        --font-key-unit: 24px;
+      }
+      .app-container {
+        padding: 0 var(--space-md);
+      }
+      .ingredient-list {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: var(--space-sm);
+      }
+      .step-card-header {
+        padding: var(--space-md);
+      }
+      .step-card-body-inner {
+        padding: 0 var(--space-md) var(--space-md);
+      }
+      .timer-display {
+        font-size: 42px;
+      }
+    }
+
+    @media (min-width: 500px) {
+      .ingredient-list {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    @media (min-width: 768px) {
+      :root {
+        --font-title: 42px;
+        --font-step-title: 36px;
+      }
+      .app-container {
+        padding: 0 var(--space-xl);
+      }
+      .step-card-header {
+        padding: var(--space-xl);
+      }
+      .step-card-body-inner {
+        padding: 0 var(--space-xl) var(--space-xl);
+      }
+      .bottom-nav {
+        justify-content: center;
+        gap: var(--space-xl);
+      }
+    }
+
+    /* 横屏优化 */
+    @media (orientation: landscape) and (max-height: 500px) {
+      :root {
+        --nav-height: 56px;
+      }
+      .product-image-wrapper {
+        max-width: 160px;
+        margin: 0 auto var(--space-md);
+      }
+      .product-title {
+        font-size: 28px;
+      }
+      .bottom-nav {
+        padding: var(--space-xs) var(--space-md);
+      }
+      .nav-btn {
+        min-height: 44px;
+      }
+    }
+
+    /* ============================================================
+       打印样式
+       ============================================================ */
+    @media print {
+      .bottom-nav,
+      .theme-toggle,
+      .search-bar,
+      .timer-controls,
+      .step-complete-btn,
+      .voice-btn,
+      .global-actions,
+      .image-viewer,
+      .completion-screen {
+        display: none !important;
+      }
+      body {
+        padding-bottom: 0;
+        background: #FFFFFF;
+        color: #111111;
+      }
+      .step-card-body {
+        max-height: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== 空的根容器，所有内容由 JS 动态生成 ===== -->
+  <div id="appRoot"></div>
+
+  <!-- ===== JavaScript 全部内联 ===== -->
+  <script>
+    // ============================================================
+    // SOP DATA — 所有产品数据集中于此 JSON 对象
+    // 修改此对象即可生成新的 SOP，无需修改任何 HTML/JS 结构
+    // ============================================================
+    const SOP_DATA = {
+      // ---- 产品基本信息 ----
+      name: '冰红茶',
+      image: '',           // 产品封面图 URL，留空则显示 emoji 占位
+      version: 'v2.0',
+      updateTime: '2025-07-01',
+      category: '饮品',
+      categoryIcon: '🧊',
+      prepTime: '约 2 分钟',
+      suggestedPrice: '¥12',
+      author: '张师傅',
+      description: '经典港式冰红茶，选用锡兰红茶搭配新鲜柠檬，酸甜适中、清爽解腻。每杯严格按照 SOP 制作，确保出品稳定。',
+      tags: ['经典', '解腻', '含咖啡因', '柠檬系列'],
+
+      // ---- 主题覆盖（可选，不填则用默认值）----
+      theme: {
+        primary: '#F59E0B',
+        warning: '#FF9800',
+        error: '#F44336',
+        success: '#4CAF50'
+      },
+
+      // ---- 所需工具 ----
+      tools: [
+        { name: '雪克杯', icon: '🫗' },
+        { name: '量杯', icon: '🥛' },
+        { name: '砧板', icon: '🔪' },
+        { name: '水果刀', icon: '🔪' },
+        { name: '捣棒', icon: '🔨' },
+        { name: '冰铲', icon: '🧊' },
+        { name: '吧勺', icon: '🥄' }
+      ],
+
+      // ---- 原料配方 ----
+      ingredients: [
+        { name: '锡兰红茶底', amount: '250', unit: 'ml', image: '', icon: '🍵' },
+        { name: '新鲜柠檬', amount: '3', unit: '片', image: '', icon: '🍋' },
+        { name: '果糖', amount: '30', unit: 'ml', image: '', icon: '🍯' },
+        { name: '冰块', amount: '200', unit: 'g', image: '', icon: '🧊' }
+      ],
+
+      // ---- 制作步骤 ----
+      steps: [
+        {
+          title: '准备茶底',
+          description: '量取 250ml 锡兰红茶底备用。茶底需提前泡制：取锡兰红茶叶 8g，用 95°C 热水 300ml 浸泡 6 分钟后过滤，自然冷却至室温后冷藏备用。茶底浓度直接影响成品口感，过浓会苦涩，过淡则无茶味。',
+          image: '',
+          keyNumber: '250',
+          keyNumberUnit: 'ml 茶底',
+          timer: 0,
+          voice: '第一步，量取250毫升锡兰红茶底备用。',
+          warning: '',
+          dangerLevel: 'normal',
+          tips: '茶底提前一天泡好放冷藏，第二天使用时茶味更醇、苦涩感更低。夏季高峰期可一次泡 2L 备用。',
+          errors: '常见错误：茶底泡太久（超过8分钟）会产生涩味，成品喝起来锁喉。'
+        },
+        {
+          title: '切柠檬',
+          description: '取一颗新鲜柠檬洗净，用水果刀切成厚度约 4mm 的薄片，取 3 片备用。切柠檬前确认柠檬新鲜度：表皮光滑有光泽、手感结实有弹性、切开后汁水充足。柠檬片过厚会影响捣压效果，过薄容易捣烂影响卖相。',
+          image: '',
+          keyNumber: '3',
+          keyNumberUnit: '片柠檬',
+          timer: 0,
+          voice: '第二步，将新鲜柠檬切成薄片，取3片备用。',
+          warning: '使用水果刀时注意手指安全，刀刃向外推切，手指内收。',
+          dangerLevel: 'warning',
+          tips: '柠檬对半切开后，先切掉两头再切片，每一片厚度更均匀。切片前把柠檬在台面上滚压 10 秒，汁水更容易出来。',
+          errors: '常见错误：柠檬切片太厚（>6mm），捣压时不易出汁，成品酸味不足。'
+        },
+        {
+          title: '捣压柠檬',
+          description: '将 3 片柠檬放入雪克杯中，用捣棒轻轻捣压 8-10 下。捣压目的是释放柠檬汁和精油香气，注意不要过度捣烂柠檬皮，否则会释放苦味物质影响口感。捣到柠檬片微微破损、能看到汁水渗出即可。',
+          image: '',
+          keyNumber: '8~10',
+          keyNumberUnit: '下捣压',
+          timer: 0,
+          voice: '第三步，将柠檬片放入雪克杯，用捣棒轻轻捣压8到10下。',
+          warning: '',
+          dangerLevel: 'normal',
+          tips: '捣棒斜着按压比直着捣更省力，而且不会把柠檬皮捣碎。听到轻微的"噗嗤"声就说明出汁了。',
+          errors: '常见错误：用力过猛把柠檬皮捣得粉碎，成品会有明显苦味和白色碎屑。'
+        },
+        {
+          title: '加入果糖',
+          description: '用量杯准确量取 30ml 果糖，倒入雪克杯中。用吧勺轻轻搅拌使果糖与柠檬汁混合。果糖的甜度平衡柠檬的酸味，此比例经反复测试为最佳酸甜比。如果客人要求调整甜度，少糖减至 20ml，半糖减至 15ml。',
+          image: '',
+          keyNumber: '30',
+          keyNumberUnit: 'ml 果糖',
+          timer: 0,
+          voice: '第四步，量取30毫升果糖，倒入雪克杯中搅拌混合。',
+          warning: '',
+          dangerLevel: 'normal',
+          tips: '果糖加入后先和柠檬汁拌匀（搅拌 5 秒），再加茶底，这样酸甜融合更均匀。',
+          errors: '常见错误：先加茶底再加果糖，果糖沉在底部搅拌不均匀，第一口太酸最后一口太甜。'
+        },
+        {
+          title: '雪克摇匀',
+          description: '将 250ml 红茶底倒入雪克杯，加入 200g 冰块，盖紧杯盖，双手持杯上下摇动 15-20 次。摇匀的目的是让茶底、果糖、柠檬汁充分混合并快速冰镇。摇到杯壁起雾、手感冰凉为完成。摇动时手指压紧杯盖，防止漏液。',
+          image: '',
+          keyNumber: '200',
+          keyNumberUnit: 'g 冰块',
+          timer: 0,
+          voice: '第五步，加入红茶底和冰块，盖紧杯盖摇动15到20次。',
+          warning: '雪克杯盖必须盖紧！确认杯盖压到底后再开始摇动。',
+          dangerLevel: 'danger',
+          tips: '摇动时让冰块撞击杯壁发出声音，频率约每秒 2-3 下，手臂放松用手腕发力不累。冰红茶摇到杯壁起雾即可，不需要像奶茶那样摇到起泡。',
+          errors: '常见错误：杯盖没盖紧导致漏液；冰块量不足（<150g）导致温度不够冰。'
+        },
+        {
+          title: '出杯封装',
+          description: '将摇匀的冰红茶倒入出品杯中，放入吸管和两片新鲜柠檬片装饰，封口机密封。用纸巾擦拭杯身确保干净无冷凝水。贴上标签标注产品名称和甜度，核对无误后出餐。',
+          image: '',
+          keyNumber: '',
+          keyNumberUnit: '',
+          timer: 0,
+          voice: '第六步，倒入出品杯，加柠檬片装饰，封口、擦拭杯身、贴标签出餐。',
+          warning: '',
+          dangerLevel: 'normal',
+          tips: '出品杯中放 2 片新鲜柠檬片（不是捣过的），提升颜值同时客人可以自己调酸度。封口前检查柠檬片不超过 2 片，太多会堵住吸管。',
+          errors: '常见错误：忘了放柠檬片装饰，成品看起来像普通红茶，影响客人体验。杯身有水渍不擦拭，客人拿起来手湿。'
+        }
+      ],
+
+      // ---- FAQ 常见问题 ----
+      faq: [
+        {
+          question: '柠檬可以提前切好吗？',
+          answer: '可以提前 2 小时切好，但需要密封冷藏保存。超过 2 小时的柠檬片水分蒸发、表皮氧化变干，影响出汁率和成品卖相。建议高峰期前批量切 20-30 份，用保鲜膜密封后放冰箱冷藏。'
+        },
+        {
+          question: '客人觉得太酸或不够酸怎么办？',
+          answer: '标准配方为 3 片柠檬 + 30ml 果糖。客人要求更酸：增加 1-2 片柠檬捣压，果糖不变。客人要求不酸：柠檬减至 2 片或不捣压直接放入成品杯中作为装饰。调整后在标签上标注。'
+        },
+        {
+          question: '可以用柠檬汁代替新鲜柠檬吗？',
+          answer: '不建议。柠檬汁缺少新鲜柠檬皮的芳香精油，成品缺少层次感。而且市售柠檬汁酸度不稳定，难以控制口感。只有新鲜柠檬缺货时方可临时替代，用量改为 15ml 柠檬汁（不捣压）。'
+        },
+        {
+          question: '为什么有时候冰红茶有苦味？',
+          answer: '苦味通常来自两个原因：1）柠檬皮被捣得太碎，释放了白色内皮中的苦味物质；2）茶底泡太久（超过 8 分钟）产生涩味。解决方法：捣压控制在 8-10 下不捣碎皮；茶底严格控制在 6 分钟出汤。'
+        },
+        {
+          question: '冰红茶可以不加冰吗？',
+          answer: '不建议去冰。冰块不仅降温还能稀释浓度，去冰后茶底浓度过高会很苦涩。如果客人坚持去冰，茶底用量从 250ml 减至 200ml，并补 50ml 纯净水稀释。制作时间为热红茶，需在标签上标注"去冰"。'
+        }
+      ],
+
+      // ---- 制作完成提示 ----
+      completion: {
+        title: '制作完成',
+        message: '冰红茶已完成！请核对柠檬片装饰、吸管、标签和杯身清洁后尽快出餐。',
+        icon: '🧊'
+      }
+    };
+
+    // ============================================================
+    // STATE MANAGEMENT — 全局状态管理
+    // ============================================================
+
+    /**
+     * 应用全局状态
+     * 所有可变状态集中管理，通过 setState 更新并自动持久化
+     */
+    const state = {
+      currentStep: 0,           // 当前查看的步骤索引（0-based）
+      completedSteps: [],       // 已完成步骤索引数组（持久化）
+      darkMode: null,           // null=自动, true=暗黑, false=明亮
+      allExpanded: false,       // 是否全部展开
+      searchQuery: '',          // 搜索关键词
+      timerSeconds: 0,          // 当前计时器剩余秒数
+      timerStepIndex: -1,       // 当前计时器所属步骤
+      timerRunning: false,      // 计时器是否运行中
+      timerInterval: null,      // setInterval ID
+      startTime: null,          // 本次制作开始时间
+      completionCount: 0,       // 历史完成总次数（持久化）
+      imageViewerSrc: '',       // 全屏图片 src
+      imageViewerAlt: '',       // 全屏图片 alt
+      expandedFAQs: [],         // 已展开的 FAQ 索引
+    };
+
+    /**
+     * 更新状态并自动触发重渲染（增量更新）
+     * @param {Object} changes - 要更新的字段
+     */
+    function setState(changes) {
+      Object.assign(state, changes);
+      saveState();
+      refreshUI();
+    }
+
+    // ============================================================
+    // LOCALSTORAGE 持久化
+    // ============================================================
+
+    const LS_KEY = 'sop_data';
+
+    /**
+     * 从 localStorage 读取持久化数据到 state
+     */
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        if (raw) {
+          const saved = JSON.parse(raw);
+          if (saved.completedSteps) state.completedSteps = saved.completedSteps;
+          if (saved.darkMode !== undefined) state.darkMode = saved.darkMode;
+          if (saved.completionCount) state.completionCount = saved.completionCount;
+          if (saved.currentStep !== undefined) state.currentStep = saved.currentStep;
+        }
+      } catch (e) {
+        // 忽略解析错误
+      }
+    }
+
+    /**
+     * 将需要持久化的 state 写入 localStorage
+     */
+    function saveState() {
+      try {
+        localStorage.setItem(LS_KEY, JSON.stringify({
+          completedSteps: state.completedSteps,
+          darkMode: state.darkMode,
+          completionCount: state.completionCount,
+          currentStep: state.currentStep
+        }));
+      } catch (e) {
+        // 忽略存储错误
+      }
+    }
+
+    // ============================================================
+    // DARK MODE — 暗黑模式管理
+    // ============================================================
+
+    /**
+     * 应用暗黑模式到 DOM
+     */
+    function applyDarkMode() {
+      const preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = state.darkMode === null ? preferDark : state.darkMode;
+      document.body.classList.toggle('dark', isDark);
+      // 更新 meta theme-color
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', isDark ? '#1C1C1E' : '#FFFFFF');
+    }
+
+    /**
+     * 切换暗黑模式
+     */
+    function toggleDarkMode() {
+      const preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const current = state.darkMode === null ? preferDark : state.darkMode;
+      setState({ darkMode: !current });
+    }
+
+    // 监听系统主题变化
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (state.darkMode === null) applyDarkMode();
+    });
+
+    // ============================================================
+    // UTILITY FUNCTIONS — 工具函数
+    // ============================================================
+
+    /**
+     * 格式化秒数为 mm:ss
+     * @param {number} sec - 秒数
+     * @returns {string}
+     */
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    /**
+     * 格式化耗时为可读字符串
+     * @param {number} ms - 毫秒
+     * @returns {string}
+     */
+    function formatDuration(ms) {
+      const sec = Math.floor(ms / 1000);
+      if (sec < 60) return `${sec} 秒`;
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${m} 分 ${s} 秒`;
+    }
+
+    /**
+     * 获取当前时间字符串 HH:MM:SS
+     * @returns {string}
+     */
+    function getTimeString() {
+      const d = new Date();
+      return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
+    }
+
+    /**
+     * 计算当前进度百分比
+     * @returns {number}
+     */
+    function getProgress() {
+      const total = SOP_DATA.steps.length;
+      if (total === 0) return 0;
+      return Math.round((state.completedSteps.length / total) * 100);
+    }
+
+    /**
+     * 判断是否所有步骤已完成
+     * @returns {boolean}
+     */
+    function isAllComplete() {
+      return state.completedSteps.length === SOP_DATA.steps.length && SOP_DATA.steps.length > 0;
+    }
+
+    /**
+     * 滚动到指定元素（带安全区间距）
+     * @param {HTMLElement} el
+     */
+    function scrollToElement(el) {
+      if (!el) return;
+      const navH = 80 + parseInt(getComputedStyle(document.documentElement).getPropertyValue('--safe-bottom') || '0');
+      const top = el.getBoundingClientRect().top + window.pageYOffset - navH - 20;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+
+    /**
+     * HTML 转义（防止 XSS，虽然所有数据来自可控 JSON）
+     * @param {string} str
+     * @returns {string}
+     */
+    function escapeHTML(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // ============================================================
+    // RENDER ENGINE — 渲染引擎
+    // 所有 DOM 由以下函数动态生成
+    // ============================================================
+
+    /**
+     * 获取根容器
+     */
+    function getRoot() {
+      return document.getElementById('appRoot');
+    }
+
+    /**
+     * 完整重渲染（仅在数据结构变化时调用）
+     */
+    function renderApp() {
+      const root = getRoot();
+      root.innerHTML = '';
+
+      // 构建完整 DOM 树
+      root.appendChild(renderThemeToggle());
+      root.appendChild(renderHeader());
+      root.appendChild(renderMainContent());
+      root.appendChild(renderFAQSection());
+      root.appendChild(renderBottomNav());
+      root.appendChild(renderImageViewer());
+      root.appendChild(renderCompletionScreen());
+
+      // 应用暗黑模式
+      applyDarkMode();
+
+      // 绑定事件（事件委托 + 直接绑定）
+      bindGlobalEvents();
+    }
+
+    /**
+     * 增量 UI 刷新（状态变更时调用，性能优于完整重渲染）
+     */
+    function refreshUI() {
+      const root = getRoot();
+
+      // 更新主题
+      applyDarkMode();
+
+      // 更新主题切换按钮
+      const themeToggle = root.querySelector('.theme-toggle');
+      if (themeToggle) {
+        const preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = state.darkMode === null ? preferDark : state.darkMode;
+        themeToggle.textContent = isDark ? '☀️' : '🌙';
+      }
+
+      // 更新进度条
+      updateProgressUI();
+
+      // 更新步骤卡片状态
+      updateStepCardsUI();
+
+      // 更新搜索栏状态
+      updateSearchUI();
+
+      // 更新完成画面
+      updateCompletionUI();
+
+      // 更新全局操作按钮
+      updateGlobalActionsUI();
+
+      // 更新 FAQ
+      updateFAQExpandedState();
+
+      // 更新搜索匹配高亮
+      updateSearchMatchUI();
+
+      // 保存状态
+      saveState();
+    }
+
+    /**
+     * 渲染主题切换浮动按钮
+     */
+    function renderThemeToggle() {
+      const btn = document.createElement('button');
+      btn.className = 'theme-toggle';
+      btn.title = '切换暗黑模式';
+      btn.textContent = '🌙';
+      btn.addEventListener('click', toggleDarkMode);
+      return btn;
+    }
+
+    /**
+     * 渲染产品头部
+     */
+    function renderHeader() {
+      const header = document.createElement('div');
+      header.className = 'header';
+
+      // 产品图片
+      const imgWrapper = document.createElement('div');
+      imgWrapper.className = 'product-image-wrapper';
+      imgWrapper.setAttribute('data-image', SOP_DATA.image || '');
+      if (SOP_DATA.image) {
+        const img = document.createElement('img');
+        img.src = SOP_DATA.image;
+        img.alt = SOP_DATA.name;
+        imgWrapper.appendChild(img);
+      } else {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'product-image-placeholder';
+        placeholder.textContent = SOP_DATA.categoryIcon || '🥤';
+        imgWrapper.appendChild(placeholder);
+      }
+      imgWrapper.addEventListener('click', () => openImageViewer(SOP_DATA.image || '', SOP_DATA.name, true));
+      header.appendChild(imgWrapper);
+
+      // 产品名称
+      const title = document.createElement('h1');
+      title.className = 'product-title';
+      title.textContent = SOP_DATA.name;
+      header.appendChild(title);
+
+      // 元信息行
+      const meta = document.createElement('div');
+      meta.className = 'product-meta';
+      const metaItems = [
+        { icon: SOP_DATA.categoryIcon, text: SOP_DATA.category },
+        { icon: '⏱', text: SOP_DATA.prepTime },
+        { icon: '', text: SOP_DATA.suggestedPrice ? SOP_DATA.suggestedPrice : '' },
+        { icon: '📋', text: `${SOP_DATA.version} | ${SOP_DATA.updateTime}` },
+        { icon: '👤', text: SOP_DATA.author }
+      ];
+      metaItems.forEach(item => {
+        if (!item.text) return;
+        const span = document.createElement('span');
+        span.className = 'product-meta-item';
+        if (item.icon) {
+          const icon = document.createElement('span');
+          icon.className = 'meta-icon';
+          icon.textContent = item.icon;
+          span.appendChild(icon);
+        }
+        span.appendChild(document.createTextNode(item.text));
+        meta.appendChild(span);
+      });
+      header.appendChild(meta);
+
+      // 标签
+      if (SOP_DATA.tags && SOP_DATA.tags.length > 0) {
+        const tagsRow = document.createElement('div');
+        tagsRow.className = 'product-tags';
+        SOP_DATA.tags.forEach(tag => {
+          const tagEl = document.createElement('span');
+          tagEl.className = 'product-tag';
+          tagEl.textContent = tag;
+          tagsRow.appendChild(tagEl);
+        });
+        header.appendChild(tagsRow);
+      }
+
+      // 简介
+      if (SOP_DATA.description) {
+        const desc = document.createElement('p');
+        desc.className = 'product-description';
+        desc.textContent = SOP_DATA.description;
+        header.appendChild(desc);
+      }
+
+      return header;
+    }
+
+    /**
+     * 渲染主内容区域（原料 + 工具 + 搜索 + 进度 + 步骤）
+     */
+    function renderMainContent() {
+      const container = document.createElement('div');
+      container.className = 'app-container';
+
+      // 分区标题：原料配方
+      if (SOP_DATA.ingredients && SOP_DATA.ingredients.length > 0) {
+        const secTitle = document.createElement('h2');
+        secTitle.className = 'section-title';
+        secTitle.textContent = '原料配方';
+        container.appendChild(secTitle);
+
+        const ingList = document.createElement('div');
+        ingList.className = 'ingredient-list';
+        SOP_DATA.ingredients.forEach(ing => {
+          const card = document.createElement('div');
+          card.className = 'ingredient-card';
+          card.innerHTML = `
+            <div class="ingredient-icon">${escapeHTML(ing.icon || '📦')}</div>
+            <div class="ingredient-name">${escapeHTML(ing.name)}</div>
+            <div class="ingredient-amount">${escapeHTML(ing.amount)}</div>
+            <div class="ingredient-unit">${escapeHTML(ing.unit)}</div>
+          `;
+          ingList.appendChild(card);
+        });
+        container.appendChild(ingList);
+      }
+
+      // 分区标题：所需工具
+      if (SOP_DATA.tools && SOP_DATA.tools.length > 0) {
+        const secTitle = document.createElement('h2');
+        secTitle.className = 'section-title';
+        secTitle.textContent = '所需工具';
+        container.appendChild(secTitle);
+
+        const toolsList = document.createElement('div');
+        toolsList.className = 'tools-list';
+        SOP_DATA.tools.forEach(tool => {
+          const chip = document.createElement('span');
+          chip.className = 'tool-chip';
+          chip.innerHTML = `${escapeHTML(tool.icon || '🔧')} ${escapeHTML(tool.name)}`;
+          toolsList.appendChild(chip);
+        });
+        container.appendChild(toolsList);
+      }
+
+      // 搜索栏
+      container.appendChild(renderSearchBar());
+
+      // 分区标题：制作步骤
+      const stepsTitle = document.createElement('h2');
+      stepsTitle.className = 'section-title';
+      stepsTitle.textContent = '制作步骤';
+      container.appendChild(stepsTitle);
+
+      // 进度条
+      container.appendChild(renderProgressBar());
+
+      // 全局操作按钮
+      container.appendChild(renderGlobalActions());
+
+      // 步骤卡片容器
+      const stepsContainer = document.createElement('div');
+      stepsContainer.className = 'steps-container';
+      stepsContainer.id = 'stepsContainer';
+      SOP_DATA.steps.forEach((step, index) => {
+        stepsContainer.appendChild(renderStepCard(step, index));
+      });
+      container.appendChild(stepsContainer);
+
+      // 重新渲染全局操作（步骤下方也放一份）
+      container.appendChild(renderGlobalActions());
+
+      return container;
+    }
+
+    /**
+     * 渲染搜索栏
+     */
+    function renderSearchBar() {
+      const bar = document.createElement('div');
+      bar.className = 'search-bar';
+      bar.innerHTML = `
+        <div class="search-input-wrapper">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" type="text" placeholder="搜索步骤、注意事项、FAQ…" value="${escapeHTML(state.searchQuery)}" id="searchInput">
+          <button class="search-clear" id="searchClear">✕</button>
+        </div>
+      `;
+      return bar;
+    }
+
+    /**
+     * 渲染进度条
+     */
+    function renderProgressBar() {
+      const section = document.createElement('div');
+      section.className = 'progress-section';
+      const total = SOP_DATA.steps.length;
+      const done = state.completedSteps.length;
+      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+      section.innerHTML = `
+        <div class="progress-info">
+          <span class="progress-count">步骤 ${done} / ${total}</span>
+          <span class="progress-percent">${pct}%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width: ${pct}%"></div>
+        </div>
+      `;
+      return section;
+    }
+
+    /**
+     * 渲染全局操作按钮
+     */
+    function renderGlobalActions() {
+      const row = document.createElement('div');
+      row.className = 'global-actions';
+      row.innerHTML = `
+        <button class="global-action-btn" data-action="expand-all">${state.allExpanded ? '📑 全部折叠' : '📖 全部展开'}</button>
+        <button class="global-action-btn" data-action="restart">🔄 重新开始</button>
+      `;
+      return row;
+    }
+
+    /**
+     * 渲染单个步骤卡片
+     * @param {Object} step - 步骤数据
+     * @param {number} index - 步骤索引
+     */
+    function renderStepCard(step, index) {
+      const isCompleted = state.completedSteps.includes(index);
+      const isExpanded = state.allExpanded || state.currentStep === index || isCompleted;
+      // 搜索匹配高亮
+      const isMatch = state.searchQuery && (
+        step.title.includes(state.searchQuery) ||
+        step.description.includes(state.searchQuery) ||
+        (step.tips && step.tips.includes(state.searchQuery)) ||
+        (step.errors && step.errors.includes(state.searchQuery)) ||
+        (step.warning && step.warning.includes(state.searchQuery))
+      );
+
+      const card = document.createElement('div');
+      card.className = 'step-card';
+      card.id = `step-${index}`;
+      card.setAttribute('data-step-index', index);
+      if (isCompleted) card.classList.add('completed');
+      if (isExpanded) card.classList.add('expanded');
+      if (step.dangerLevel === 'danger') card.classList.add('danger');
+      if (step.dangerLevel === 'warning') card.classList.add('warning-card');
+      if (isMatch) card.classList.add('search-match');
+
+      // 卡片头部
+      const header = document.createElement('div');
+      header.className = 'step-card-header';
+      header.setAttribute('data-action', 'toggle-step');
+      header.innerHTML = `
+        <div class="step-number">${isCompleted ? '✓' : index + 1}</div>
+        <div class="step-header-content">
+          <div class="step-title">${escapeHTML(step.title)}</div>
+          <div class="step-header-meta">${step.timer > 0 ? '⏱ 含倒计时 · ' : ''}${step.dangerLevel === 'danger' ? '⚠️ 危险操作' : step.dangerLevel === 'warning' ? '⚡ 注意' : ''}</div>
+        </div>
+        <div class="step-toggle-icon">▼</div>
+      `;
+      card.appendChild(header);
+
+      // 卡片内容体
+      const body = document.createElement('div');
+      body.className = 'step-card-body';
+      const bodyInner = document.createElement('div');
+      bodyInner.className = 'step-card-body-inner';
+
+      // 步骤图片
+      if (step.image) {
+        const imgWrapper = document.createElement('div');
+        imgWrapper.className = 'step-image-wrapper';
+        imgWrapper.setAttribute('data-image', step.image);
+        const img = document.createElement('img');
+        img.src = step.image;
+        img.alt = step.title;
+        imgWrapper.appendChild(img);
+        imgWrapper.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openImageViewer(step.image, step.title);
+        });
+        bodyInner.appendChild(imgWrapper);
+      }
+
+      // 关键数字
+      if (step.keyNumber) {
+        const numDisplay = document.createElement('div');
+        numDisplay.className = 'key-number-display';
+        numDisplay.innerHTML = `
+          <div class="key-number">${escapeHTML(step.keyNumber)}</div>
+          ${step.keyNumberUnit ? `<div class="key-number-unit">${escapeHTML(step.keyNumberUnit)}</div>` : ''}
+        `;
+        bodyInner.appendChild(numDisplay);
+      }
+
+      // 步骤描述
+      const desc = document.createElement('div');
+      desc.className = 'step-description';
+      desc.textContent = step.description;
+      bodyInner.appendChild(desc);
+
+      // 警告框（红色）
+      if (step.warning) {
+        const warn = document.createElement('div');
+        warn.className = 'step-warning-box';
+        warn.innerHTML = `<span class="box-icon">⚠️</span> ${escapeHTML(step.warning)}`;
+        bodyInner.appendChild(warn);
+      }
+
+      // 老员工技巧（绿色）
+      if (step.tips) {
+        const tips = document.createElement('div');
+        tips.className = 'step-tips-box';
+        tips.innerHTML = `<span class="box-icon">💡</span> 老员工技巧：${escapeHTML(step.tips)}`;
+        bodyInner.appendChild(tips);
+      }
+
+      // 常见错误（黄色）
+      if (step.errors) {
+        const errors = document.createElement('div');
+        errors.className = 'step-errors-box';
+        errors.innerHTML = `<span class="box-icon">⚠️</span> 常见错误：${escapeHTML(step.errors)}`;
+        bodyInner.appendChild(errors);
+      }
+
+      // 计时器
+      if (step.timer > 0) {
+        bodyInner.appendChild(renderTimerSection(step, index));
+      }
+
+      // 语音朗读按钮
+      if (step.voice) {
+        const voiceBtn = document.createElement('button');
+        voiceBtn.className = 'voice-btn';
+        voiceBtn.setAttribute('data-action', 'speak');
+        voiceBtn.setAttribute('data-step-index', index);
+        voiceBtn.textContent = '🔊 朗读步骤';
+        bodyInner.appendChild(voiceBtn);
+      }
+
+      // 完成按钮
+      const completeBtn = document.createElement('button');
+      completeBtn.className = 'step-complete-btn';
+      completeBtn.setAttribute('data-action', 'complete-step');
+      completeBtn.setAttribute('data-step-index', index);
+      completeBtn.textContent = isCompleted ? '✓ 已完成' : '✓ 标记完成';
+      bodyInner.appendChild(completeBtn);
+
+      body.appendChild(bodyInner);
+      card.appendChild(body);
+
+      return card;
+    }
+
+    /**
+     * 渲染计时器模块
+     */
+    function renderTimerSection(step, index) {
+      const section = document.createElement('div');
+      section.className = 'timer-section';
+      section.id = `timer-${index}`;
+      const totalSeconds = step.timer;
+      const displaySeconds = (state.timerStepIndex === index && state.timerRunning)
+        ? state.timerSeconds
+        : totalSeconds;
+
+      section.innerHTML = `
+        <div class="timer-display" id="timerDisplay-${index}">${formatTime(displaySeconds)}</div>
+        <div class="timer-controls">
+          <button class="timer-btn timer-btn-start" data-action="timer-start" data-step-index="${index}">▶ 开始</button>
+          <button class="timer-btn timer-btn-pause" data-action="timer-pause" data-step-index="${index}">⏸ 暂停</button>
+          <button class="timer-btn timer-btn-reset" data-action="timer-reset" data-step-index="${index}">↺ 重置</button>
+        </div>
+      `;
+      return section;
+    }
+
+    /**
+     * 渲染 FAQ 区域
+     */
+    function renderFAQSection() {
+      if (!SOP_DATA.faq || SOP_DATA.faq.length === 0) return document.createElement('div');
+
+      const section = document.createElement('div');
+      section.className = 'app-container faq-section';
+
+      const secTitle = document.createElement('h2');
+      secTitle.className = 'section-title';
+      secTitle.textContent = '常见问题';
+      section.appendChild(secTitle);
+
+      SOP_DATA.faq.forEach((faq, index) => {
+        const item = document.createElement('div');
+        item.className = 'faq-item';
+        item.id = `faq-${index}`;
+        if (state.expandedFAQs.includes(index)) item.classList.add('expanded');
+
+        item.innerHTML = `
+          <div class="faq-question" data-action="toggle-faq" data-faq-index="${index}">
+            <span class="faq-question-text">${escapeHTML(faq.question)}</span>
+            <span class="faq-icon">▼</span>
+          </div>
+          <div class="faq-answer">
+            <div class="faq-answer-text">${escapeHTML(faq.answer)}</div>
+          </div>
+        `;
+        section.appendChild(item);
+      });
+
+      return section;
+    }
+
+    /**
+     * 渲染全屏图片查看器
+     */
+    function renderImageViewer() {
+      const viewer = document.createElement('div');
+      viewer.className = 'image-viewer';
+      viewer.id = 'imageViewer';
+      viewer.innerHTML = `
+        <button class="image-viewer-close">✕</button>
+        <div id="imageViewerContent"></div>
+      `;
+      return viewer;
+    }
+
+    /**
+     * 渲染完成画面
+     */
+    function renderCompletionScreen() {
+      const screen = document.createElement('div');
+      screen.className = 'completion-screen';
+      screen.id = 'completionScreen';
+
+      const now = new Date();
+      const duration = state.startTime ? now - state.startTime : 0;
+
+      screen.innerHTML = `
+        <div class="completion-icon">${escapeHTML(SOP_DATA.completion.icon)}</div>
+        <div class="completion-title">${escapeHTML(SOP_DATA.completion.title)}</div>
+        <div class="completion-message">${escapeHTML(SOP_DATA.completion.message)}</div>
+        <div class="completion-stats">
+          <div class="completion-stat">
+            <div class="completion-stat-value">${formatDuration(duration)}</div>
+            <div class="completion-stat-label">本次耗时</div>
+          </div>
+          <div class="completion-stat">
+            <div class="completion-stat-value">${getTimeString()}</div>
+            <div class="completion-stat-label">完成时间</div>
+          </div>
+          <div class="completion-stat">
+            <div class="completion-stat-value">${state.completionCount}</div>
+            <div class="completion-stat-label">完成次数</div>
+          </div>
+        </div>
+        <button class="completion-restart-btn" id="completionRestart">🔄 重新开始</button>
+      `;
+      return screen;
+    }
+
+    /**
+     * 渲染底部导航
+     */
+    function renderBottomNav() {
+      const nav = document.createElement('nav');
+      nav.className = 'bottom-nav';
+      nav.innerHTML = `
+        <button class="nav-btn" data-action="prev-step">
+          <span class="nav-btn-icon">◀</span>
+          <span class="nav-btn-label">上一步</span>
+        </button>
+        <button class="nav-btn" data-action="next-step">
+          <span class="nav-btn-icon">▶</span>
+          <span class="nav-btn-label">下一步</span>
+        </button>
+        <button class="nav-btn" data-action="restart">
+          <span class="nav-btn-icon">🔄</span>
+          <span class="nav-btn-label">重新开始</span>
+        </button>
+        <button class="nav-btn" data-action="goto-toc">
+          <span class="nav-btn-icon">📋</span>
+          <span class="nav-btn-label">目录</span>
+        </button>
+      `;
+      return nav;
+    }
+
+    // ============================================================
+    // UI UPDATE FUNCTIONS — 增量 UI 更新（避免完整重渲染）
+    // ============================================================
+
+    function updateProgressUI() {
+      const total = SOP_DATA.steps.length;
+      const done = state.completedSteps.length;
+      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+      const countEl = document.querySelector('.progress-count');
+      const pctEl = document.querySelector('.progress-percent');
+      const fillEl = document.querySelector('.progress-fill');
+      if (countEl) countEl.textContent = `步骤 ${done} / ${total}`;
+      if (pctEl) pctEl.textContent = `${pct}%`;
+      if (fillEl) fillEl.style.width = `${pct}%`;
+    }
+
+    function updateStepCardsUI() {
+      const cards = document.querySelectorAll('.step-card');
+      cards.forEach(card => {
+        const index = parseInt(card.getAttribute('data-step-index'));
+        const isCompleted = state.completedSteps.includes(index);
+        const isExpanded = state.allExpanded || state.currentStep === index;
+
+        // 更新完成状态
+        card.classList.toggle('completed', isCompleted);
+
+        // 更新展开状态（不改变手动折叠的卡片）
+        if (isExpanded && !card.classList.contains('user-collapsed')) {
+          card.classList.add('expanded');
+        } else if (!isExpanded) {
+          card.classList.remove('expanded');
+        }
+
+        // 更新步骤编号
+        const numEl = card.querySelector('.step-number');
+        if (numEl) {
+          numEl.textContent = isCompleted ? '✓' : (index + 1);
+        }
+
+        // 更新完成按钮
+        const btn = card.querySelector('.step-complete-btn');
+        if (btn) {
+          btn.textContent = isCompleted ? '✓ 已完成' : '✓ 标记完成';
+        }
+      });
+    }
+
+    function updateSearchUI() {
+      const input = document.getElementById('searchInput');
+      const clearBtn = document.getElementById('searchClear');
+      if (input && clearBtn) {
+        clearBtn.classList.toggle('visible', input.value.length > 0);
+      }
+    }
+
+    function updateCompletionUI() {
+      const screen = document.getElementById('completionScreen');
+      if (!screen) return;
+      if (isAllComplete() && SOP_DATA.steps.length > 0) {
+        screen.classList.add('visible');
+        // 更新统计数据
+        const now = new Date();
+        const duration = state.startTime ? now - state.startTime : 0;
+        const statValues = screen.querySelectorAll('.completion-stat-value');
+        if (statValues.length >= 3) {
+          statValues[0].textContent = formatDuration(duration);
+          statValues[1].textContent = getTimeString();
+          statValues[2].textContent = state.completionCount;
+        }
+      } else {
+        screen.classList.remove('visible');
+      }
+    }
+
+    function updateGlobalActionsUI() {
+      const btns = document.querySelectorAll('.global-action-btn[data-action="expand-all"]');
+      btns.forEach(btn => {
+        btn.textContent = state.allExpanded ? '📑 全部折叠' : '📖 全部展开';
+      });
+    }
+
+    function updateFAQExpandedState() {
+      const items = document.querySelectorAll('.faq-item');
+      items.forEach(item => {
+        const index = parseInt(item.id.replace('faq-', ''));
+        item.classList.toggle('expanded', state.expandedFAQs.includes(index));
+      });
+    }
+
+    /**
+     * 更新搜索匹配高亮和 FAQ 过滤
+     */
+    function updateSearchMatchUI() {
+      const query = state.searchQuery.toLowerCase().trim();
+
+      // 更新步骤卡片搜索匹配高亮
+      document.querySelectorAll('.step-card').forEach(card => {
+        const index = parseInt(card.getAttribute('data-step-index'));
+        const step = SOP_DATA.steps[index];
+        if (!step) return;
+
+        if (query) {
+          const isMatch =
+            step.title.toLowerCase().includes(query) ||
+            step.description.toLowerCase().includes(query) ||
+            (step.tips && step.tips.toLowerCase().includes(query)) ||
+            (step.errors && step.errors.toLowerCase().includes(query)) ||
+            (step.warning && step.warning.toLowerCase().includes(query));
+          card.classList.toggle('search-match', isMatch);
+          card.style.display = isMatch ? '' : 'none';
+        } else {
+          card.classList.remove('search-match');
+          card.style.display = '';
+        }
+      });
+
+      // 更新 FAQ 过滤
+      document.querySelectorAll('.faq-item').forEach(item => {
+        const index = parseInt(item.id.replace('faq-', ''));
+        const faq = SOP_DATA.faq[index];
+        if (!faq) return;
+
+        if (query) {
+          const matchFAQ =
+            faq.question.toLowerCase().includes(query) ||
+            faq.answer.toLowerCase().includes(query);
+          item.style.display = matchFAQ ? '' : 'none';
+        } else {
+          item.style.display = '';
+        }
+      });
+    }
+
+    // ============================================================
+    // EVENT HANDLERS — 事件处理
+    // ============================================================
+
+    /**
+     * 绑定全局事件（事件委托 + 直接绑定混合策略）
+     */
+    function bindGlobalEvents() {
+      // 使用事件委托处理大部分交互
+      document.body.addEventListener('click', handleGlobalClick);
+
+      // 搜索输入事件
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', handleSearchInput);
+      }
+
+      // 搜索清除按钮
+      const searchClear = document.getElementById('searchClear');
+      if (searchClear) {
+        searchClear.addEventListener('click', handleSearchClear);
+      }
+
+      // 全屏图片查看器关闭
+      const viewer = document.getElementById('imageViewer');
+      if (viewer) {
+        viewer.addEventListener('click', closeImageViewer);
+        viewer.querySelector('.image-viewer-close').addEventListener('click', (e) => {
+          e.stopPropagation();
+          closeImageViewer();
+        });
+      }
+
+      // 完成画面重新开始
+      const restartBtn = document.getElementById('completionRestart');
+      if (restartBtn) {
+        restartBtn.addEventListener('click', resetAll);
+      }
+    }
+
+    /**
+     * 全局点击事件委托
+     */
+    function handleGlobalClick(e) {
+      const target = e.target.closest('[data-action]');
+      if (!target) return;
+      const action = target.getAttribute('data-action');
+      const stepIndex = target.getAttribute('data-step-index');
+
+      switch (action) {
+        case 'toggle-step':
+          toggleStep(parseInt(stepIndex));
+          break;
+        case 'complete-step':
+          completeStep(parseInt(stepIndex));
+          break;
+        case 'prev-step':
+          goToPrevStep();
+          break;
+        case 'next-step':
+          goToNextStep();
+          break;
+        case 'restart':
+          resetAll();
+          break;
+        case 'goto-toc':
+          showTableOfContents();
+          break;
+        case 'expand-all':
+          toggleExpandAll();
+          break;
+        case 'timer-start':
+          startTimer(parseInt(stepIndex));
+          break;
+        case 'timer-pause':
+          pauseTimer(parseInt(stepIndex));
+          break;
+        case 'timer-reset':
+          resetTimer(parseInt(stepIndex));
+          break;
+        case 'speak':
+          speakStep(parseInt(stepIndex));
+          break;
+        case 'toggle-faq':
+          toggleFAQ(parseInt(target.getAttribute('data-faq-index')));
+          break;
+      }
+    }
+
+    /**
+     * 切换步骤卡片折叠状态
+     */
+    function toggleStep(index) {
+      const card = document.getElementById(`step-${index}`);
+      if (!card) return;
+      const isExpanded = card.classList.contains('expanded');
+      if (isExpanded) {
+        card.classList.add('user-collapsed');
+        card.classList.remove('expanded');
+        setState({ currentStep: state.currentStep === index ? -1 : state.currentStep });
+      } else {
+        card.classList.remove('user-collapsed');
+        card.classList.add('expanded');
+        setState({ currentStep: index });
+      }
+    }
+
+    /**
+     * 标记步骤为完成
+     */
+    function completeStep(index) {
+      if (state.completedSteps.includes(index)) return;
+
+      const completed = [...state.completedSteps, index];
+      setState({
+        completedSteps: completed,
+        currentStep: index
+      });
+
+      // 记录开始时间（如果是第一个完成的步骤）
+      if (!state.startTime && completed.length === 1) {
+        state.startTime = Date.now();
+      }
+
+      // 标记完成后自动滚动到下一步
+      if (!isAllComplete() && index < SOP_DATA.steps.length - 1) {
+        const nextCard = document.getElementById(`step-${index + 1}`);
+        if (nextCard) {
+          nextCard.classList.remove('user-collapsed');
+          nextCard.classList.add('expanded');
+          setState({ currentStep: index + 1 });
+          setTimeout(() => scrollToElement(nextCard), 300);
+        }
+      }
+
+      // 全部完成时
+      if (isAllComplete()) {
+        const count = state.completionCount + 1;
+        state.completionCount = count;
+        // 震动反馈
+        triggerHaptic();
+        // 播放提示音
+        playBeep();
+        // 滚动到顶部
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setState({ completionCount: count });
+        updateCompletionUI();
+      }
+
+      refreshUI();
+    }
+
+    /**
+     * 上一步
+     */
+    function goToPrevStep() {
+      const newIdx = Math.max(0, state.currentStep - 1);
+      setState({ currentStep: newIdx });
+      const card = document.getElementById(`step-${newIdx}`);
+      if (card) {
+        card.classList.remove('user-collapsed');
+        card.classList.add('expanded');
+        scrollToElement(card);
+      }
+    }
+
+    /**
+     * 下一步
+     */
+    function goToNextStep() {
+      const newIdx = Math.min(SOP_DATA.steps.length - 1, state.currentStep + 1);
+      setState({ currentStep: newIdx });
+      const card = document.getElementById(`step-${newIdx}`);
+      if (card) {
+        card.classList.remove('user-collapsed');
+        card.classList.add('expanded');
+        scrollToElement(card);
+      }
+    }
+
+    /**
+     * 重置所有进度
+     */
+    function resetAll() {
+      // 清除计时器
+      if (state.timerInterval) {
+        clearInterval(state.timerInterval);
+      }
+      // 先清除搜索输入框（在 setState 触发 refreshUI 之前）
+      const input = document.getElementById('searchInput');
+      if (input) input.value = '';
+      setState({
+        currentStep: 0,
+        completedSteps: [],
+        allExpanded: false,
+        searchQuery: '',
+        timerSeconds: 0,
+        timerStepIndex: -1,
+        timerRunning: false,
+        timerInterval: null,
+        startTime: Date.now(),
+        expandedFAQs: [],
+      });
+      // 清除所有展开状态标记
+      document.querySelectorAll('.step-card').forEach(c => c.classList.remove('user-collapsed'));
+      // 展开第一个步骤
+      const firstCard = document.getElementById('step-0');
+      if (firstCard) firstCard.classList.add('expanded');
+      refreshUI();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /**
+     * 全部展开 / 全部折叠
+     */
+    function toggleExpandAll() {
+      const newState = !state.allExpanded;
+      setState({ allExpanded: newState });
+      document.querySelectorAll('.step-card').forEach(c => c.classList.remove('user-collapsed'));
+      if (!newState) {
+        // 折叠时，只保持当前步骤展开
+        const card = document.getElementById(`step-${state.currentStep}`);
+        if (card) card.classList.add('expanded');
+      }
+    }
+
+    /**
+     * 搜索输入处理
+     */
+    function handleSearchInput(e) {
+      const query = e.target.value.trim();
+      setState({ searchQuery: query });
+
+      // 搜索匹配时滚动到第一个匹配项
+      if (query) {
+        const firstMatch = document.querySelector('.step-card.search-match');
+        if (firstMatch) {
+          scrollToElement(firstMatch);
+        }
+      }
+    }
+
+    /**
+     * 清除搜索
+     */
+    function handleSearchClear() {
+      const input = document.getElementById('searchInput');
+      if (input) input.value = '';
+      setState({ searchQuery: '' });
+    }
+
+    /**
+     * 开始计时器
+     */
+    function startTimer(index) {
+      const step = SOP_DATA.steps[index];
+      if (!step || step.timer <= 0) return;
+
+      // 如果已有一个计时器在运行，先停止
+      if (state.timerInterval) {
+        clearInterval(state.timerInterval);
+      }
+
+      const startSeconds = state.timerStepIndex === index ? state.timerSeconds : step.timer;
+
+      state.timerSeconds = startSeconds;
+      state.timerStepIndex = index;
+      state.timerRunning = true;
+
+      const display = document.getElementById(`timerDisplay-${index}`);
+      const updateDisplay = () => {
+        if (display) {
+          display.textContent = formatTime(state.timerSeconds);
+          display.classList.remove('warning', 'danger');
+          const pct = (state.timerSeconds / step.timer) * 100;
+          if (pct <= 25) display.classList.add('danger');
+          else if (pct <= 50) display.classList.add('warning');
+        }
+      };
+
+      updateDisplay();
+
+      state.timerInterval = setInterval(() => {
+        state.timerSeconds--;
+        updateDisplay();
+
+        if (state.timerSeconds <= 0) {
+          clearInterval(state.timerInterval);
+          state.timerInterval = null;
+          state.timerRunning = false;
+          if (display) display.classList.remove('warning', 'danger');
+
+          // 震动反馈
+          triggerHaptic();
+
+          // 播放提示音
+          playBeep();
+
+          // 语音提示
+          speakNextStep(index);
+        }
+      }, 1000);
+    }
+
+    /**
+     * 暂停计时器
+     */
+    function pauseTimer(index) {
+      if (state.timerStepIndex !== index || !state.timerRunning) return;
+      if (state.timerInterval) {
+        clearInterval(state.timerInterval);
+        state.timerInterval = null;
+      }
+      state.timerRunning = false;
+    }
+
+    /**
+     * 重置计时器
+     */
+    function resetTimer(index) {
+      if (state.timerInterval) {
+        clearInterval(state.timerInterval);
+        state.timerInterval = null;
+      }
+      const step = SOP_DATA.steps[index];
+      state.timerSeconds = step ? step.timer : 0;
+      state.timerStepIndex = index;
+      state.timerRunning = false;
+
+      const display = document.getElementById(`timerDisplay-${index}`);
+      if (display) {
+        display.textContent = formatTime(state.timerSeconds);
+        display.classList.remove('warning', 'danger');
+      }
+    }
+
+    // ============================================================
+    // VOICE & AUDIO — 语音与音频功能
+    // ============================================================
+
+    /**
+     * 触发触觉震动反馈
+     */
+    function triggerHaptic() {
+      if (navigator.vibrate) {
+        navigator.vibrate([200, 100, 200]);
+      }
+    }
+
+    /**
+     * 播放简单提示音（使用 Web Audio API）
+     */
+    function playBeep() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = 880;
+        osc.type = 'sine';
+        gain.gain.value = 0.3;
+        osc.start(ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+        osc.stop(ctx.currentTime + 0.3);
+      } catch (e) {
+        // 忽略音频错误（浏览器不支持等）
+      }
+    }
+
+    /**
+     * 使用 Web Speech API 朗读指定步骤
+     */
+    function speakStep(index) {
+      const step = SOP_DATA.steps[index];
+      if (!step || !step.voice) return;
+
+      // 停止当前朗读
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(step.voice);
+      utterance.lang = 'zh-CN';
+      utterance.rate = 0.9;
+
+      // 检查是否有可用语音
+      const voices = speechSynthesis.getVoices();
+      const zhVoice = voices.find(v => v.lang.startsWith('zh'));
+      if (zhVoice) utterance.voice = zhVoice;
+
+      speechSynthesis.speak(utterance);
+    }
+
+    /**
+     * 计时器结束后朗读下一步骤
+     */
+    function speakNextStep(index) {
+      const nextStep = SOP_DATA.steps[index + 1];
+      if (!nextStep || !nextStep.voice) return;
+
+      // 提示进入下一步
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance('计时结束，请进入下一步：' + nextStep.voice);
+      utterance.lang = 'zh-CN';
+      utterance.rate = 0.9;
+      speechSynthesis.speak(utterance);
+    }
+
+    // ============================================================
+    // IMAGE VIEWER — 全屏图片查看器
+    // ============================================================
+
+    /**
+     * 打开全屏图片查看器
+     * @param {string} src - 图片地址
+     * @param {string} alt - 图片描述
+     * @param {boolean} isPlaceholder - 是否是占位图（显示 emoji）
+     */
+    function openImageViewer(src, alt, isPlaceholder) {
+      const viewer = document.getElementById('imageViewer');
+      const content = document.getElementById('imageViewerContent');
+      if (!viewer || !content) return;
+
+      if (isPlaceholder || !src) {
+        content.innerHTML = `<span class="image-viewer-placeholder">${escapeHTML(SOP_DATA.categoryIcon || '📷')}</span>`;
+      } else {
+        content.innerHTML = `<img src="${escapeHTML(src)}" alt="${escapeHTML(alt || '')}">`;
+      }
+
+      viewer.classList.add('visible');
+      document.body.style.overflow = 'hidden';
+    }
+
+    /**
+     * 关闭全屏图片查看器
+     */
+    function closeImageViewer() {
+      const viewer = document.getElementById('imageViewer');
+      if (viewer) {
+        viewer.classList.remove('visible');
+        document.body.style.overflow = '';
+      }
+    }
+
+    // ============================================================
+    // FAQ — 常见问题交互
+    // ============================================================
+
+    /**
+     * 切换 FAQ 折叠状态
+     */
+    function toggleFAQ(index) {
+      const expanded = [...state.expandedFAQs];
+      const pos = expanded.indexOf(index);
+      if (pos > -1) {
+        expanded.splice(pos, 1);
+      } else {
+        expanded.push(index);
+      }
+      setState({ expandedFAQs: expanded });
+    }
+
+    // ============================================================
+    // TABLE OF CONTENTS — 步骤目录弹窗
+    // ============================================================
+
+    /**
+     * 显示步骤目录（简单锚点跳转视图）
+     */
+    function showTableOfContents() {
+      // 先全部展开以便用户看到所有步骤
+      if (!state.allExpanded) {
+        setState({ allExpanded: true });
+        document.querySelectorAll('.step-card').forEach(c => c.classList.remove('user-collapsed'));
+      }
+      // 滚动到第一个步骤
+      const firstCard = document.getElementById('step-0');
+      if (firstCard) scrollToElement(firstCard);
+    }
+
+    // ============================================================
+    // INITIALIZATION — 应用初始化
+    // ============================================================
+
+    /**
+     * 初始化应用
+     */
+    function init() {
+      // 1. 加载持久化数据
+      loadState();
+
+      // 2. 设置制作开始时间
+      if (state.completedSteps.length > 0 && !state.startTime) {
+        // 已有进度但无开始时间，设为当前时间（防止刷新后时间异常）
+        state.startTime = Date.now();
+      }
+      if (state.completedSteps.length === 0) {
+        state.startTime = Date.now();
+      }
+
+      // 3. 渲染完整 DOM
+      renderApp();
+
+      // 4. 如果有已完成的进度，恢复展示状态
+      if (state.completedSteps.length > 0 && state.currentStep < SOP_DATA.steps.length) {
+        const card = document.getElementById(`step-${state.currentStep}`);
+        if (card) {
+          card.classList.remove('user-collapsed');
+          card.classList.add('expanded');
+        }
+      }
+
+      // 5. 恢复搜索状态
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput && state.searchQuery) {
+        searchInput.value = state.searchQuery;
+        updateSearchUI();
+      }
+
+      // 6. 更新 UI 以同步状态
+      refreshUI();
+
+      // 7. 检查全部完成
+      if (isAllComplete()) {
+        updateCompletionUI();
+      }
+
+      // 8. 如果没有已完成步骤且没有特定当前步骤，展开第一个
+      if (state.completedSteps.length === 0 && !state.allExpanded) {
+        const firstCard = document.getElementById('step-0');
+        if (firstCard) firstCard.classList.add('expanded');
+      }
+    }
+
+    // 启动应用
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
